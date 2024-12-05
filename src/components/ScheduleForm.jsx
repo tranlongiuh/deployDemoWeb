@@ -7,6 +7,7 @@ const ScheduleForm = () => {
 	const [foods, setFoods] = useState([]);
 	const [selectFoods, setSelectFoods] = useState([]); // Lưu danh sách các món đã chọn
 	const [selectDay, setSelectDay] = useState("");
+	const [selectAll, setSelectAll] = useState(false); // State for "Select All" checkbox
 	const location = useLocation(); // Lấy vị trí hiện tại của router
 
 	const token = localStorage.getItem("token");
@@ -55,10 +56,16 @@ const ScheduleForm = () => {
 
 	// Hàm xử lý khi checkbox được thay đổi
 	const handleCheckboxChange = (foodId) => {
-		if (selectFoods.includes(foodId)) {
-			setSelectFoods(selectFoods.filter((id) => id !== foodId)); // Bỏ món ăn đã chọn
+		if (foodId === "selectAll") {
+			const newSelectAll = !selectAll;
+			setSelectAll(newSelectAll);
+			setSelectFoods(newSelectAll ? foods.map((food) => food.id) : []);
 		} else {
-			setSelectFoods([...selectFoods, foodId]); // Thêm món ăn vào danh sách đã chọn
+			if (selectFoods.includes(foodId)) {
+				setSelectFoods(selectFoods.filter((id) => id !== foodId)); // Bỏ món ăn đã chọn
+			} else {
+				setSelectFoods([...selectFoods, foodId]); // Thêm món ăn vào danh sách đã chọn
+			}
 		}
 	};
 
@@ -78,7 +85,13 @@ const ScheduleForm = () => {
 				<table className="min-w-full table-auto">
 					<thead>
 						<tr>
-							<th className="px-4 py-2">Chọn</th>
+							<th className="px-4 py-2">
+								<input
+									type="checkbox"
+									checked={selectAll}
+									onChange={() => handleCheckboxChange("selectAll")}
+								/>
+							</th>
 							<th className="px-4 py-2">Tên món ăn</th>
 							<th className="px-4 py-2">Mô tả</th>
 						</tr>

@@ -1,7 +1,7 @@
 import axios from "axios";
-import { Html5Qrcode } from "html5-qrcode";
-import React, { useEffect, useRef, useState } from "react";
-import { formatToVietnamTime, renderStatus } from "../lib/helpers";
+import React, { useEffect, useState } from "react";
+import * as XLSX from "xlsx";
+import { compareCurrentTime, renderStatus } from "../lib/helpers";
 
 const OrdersManager = () => {
 	const [orderItems, setOrderItems] = useState([]);
@@ -10,7 +10,7 @@ const OrdersManager = () => {
 	const [orderItemId, setOrderItemId] = useState(""); // Track current order item being processed
 	const [scanResult, setScanResult] = useState(null);
 	const [isScanning, setIsScanning] = useState(false);
-
+	const [selectedStatus, setSelectedStatus] = useState("ALL"); // State to track selected status
 	const token = localStorage.getItem("token");
 
 	// Axios instance setup
@@ -20,17 +20,35 @@ const OrdersManager = () => {
 		timeout: 5000,
 	});
 
-	// Function to sort and filter orders
 	const sortOrders = (params) => {
+		const statusOrder = {
+			PROCESSING: 0,
+			PAID: 1,
+			WAITING: 2,
+			SHIPPING: 3,
+			COMPLETED: 4,
+			CANCELLED: 5,
+		};
 		if (params.length > 1) {
 			return params
-				.filter((item) => item.status !== "NEW") // Filter out "NEW" status items
-				.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt)); // Sort by createdAt date
+				.filter((item) => item.status !== "NEW")
+				.sort((a, b) => {
+					if (statusOrder[a.status] !== statusOrder[b.status]) {
+						return statusOrder[a.status] - statusOrder[b.status];
+					}
+					return new Date(a.createdAt) - new Date(b.createdAt);
+				});
 		}
 		return params;
 	};
 
-	// Function to initiate order processing
+	const filterOrders = (orders, status) => {
+		if (status === "ALL") {
+			return orders;
+		}
+		return orders.filter((item) => item.status === status);
+	};
+
 	const takeOrderItem = async (id) => {
 		setIsProcessing(true);
 		setOrderItemId(id);
@@ -50,7 +68,6 @@ const OrdersManager = () => {
 		}
 	};
 
-	// Function to complete the order
 	const finishOrderItem = async (id) => {
 		setIsProcessing(true);
 		setOrderItemId(id);
@@ -70,7 +87,6 @@ const OrdersManager = () => {
 		}
 	};
 
-	// Cancel an order item
 	const cancelOrderItem = async (id) => {
 		setIsProcessing(true);
 		setOrderItemId(id);
@@ -90,7 +106,6 @@ const OrdersManager = () => {
 		}
 	};
 
-	// Fetch order items from API
 	const getOrderItems = async () => {
 		try {
 			const response = await instance.get("/api/order-items");
@@ -102,102 +117,69 @@ const OrdersManager = () => {
 		}
 	};
 
-	// Function to handle giving an order item
-	const giveOrderItem = async (id) => {
-		try {
-			const response = await instance.post(`/api/order-items/give/${id}`);
-			if (response.status === 200) {
-				// Remove the given item from the orderItems list
-				setOrderItems(orderItems.filter((item) => item.id !== id));
-			}
-		} catch (error) {
-			console.error("Error giving order item:", error);
-		}
+	const transformDataForExport = (orders) => {
+		return orders.map((item) => ({
+			ID: item.id,
+			"Thời gian đặt": item.createAt,
+			"Thời gian hoàn thành": item.finishAt || "--/--",
+			"Tên món": item.dishesDTO.name,
+			"Số lượng": item.quantity,
+			Giá: `${item.price} vnđ`,
+			"Trạng thái": renderStatus(item.status),
+			"Tên khách hàng": item.userDTO.username,
+			"Số điện thoại": item.userDTO.phone,
+			Email: item.userDTO.email,
+		}));
 	};
 
-	// Initialize QR code scanner
-	const scannerRef = useRef(null);
+	const exportToExcel = () => {
+		const filteredOrders = filterOrders(orderItems, selectedStatus);
+		const transformedData = transformDataForExport(filteredOrders);
+		const worksheet = XLSX.utils.json_to_sheet(transformedData);
+		const workbook = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+		XLSX.writeFile(workbook, "orders.xlsx");
+	};
 
 	useEffect(() => {
-		if (isScanning && !scannerRef.current) {
-			scannerRef.current = new Html5Qrcode("reader");
-			scannerRef.current
-				.start(
-					{ facingMode: "environment" },
-					{
-						qrbox: { width: 200, height: 200 },
-						fps: 5,
-					},
-					handleSuccess,
-				)
-				.catch((err) => {
-					console.warn("Scanner start failed:", err);
-					setIsScanning(false);
-				});
-		}
-
-		return () => {
-			if (scannerRef.current) {
-				scannerRef.current
-					.stop()
-					.then(() => {
-						scannerRef.current.clear();
-						scannerRef.current = null;
-					})
-					.catch((err) => console.warn("Stop failed:", err));
-			}
-		};
-	}, [isScanning]);
-
-	const handleSuccess = async (result) => {
-		try {
-			const parsedData = JSON.parse(result);
-			const formData = new FormData();
-			formData.append("idOrder", parsedData.orderDataJson);
-			formData.append("signature", parsedData.signature);
-
-			const response = await instance.post(
-				"/api/order-items/verify",
-				formData,
-				{
-					headers: { "Content-Type": "multipart/form-data" },
-				},
-			);
-			if (response.status === 200) {
-				console.log("response.data scan ", response.data);
-
-				setOrderItems(response.data);
-			}
-		} catch (error) {
-			console.error("Verification failed:", error);
-			setScanResult(
-				"Bạn không có món nào tại gian hàng này. Vui lòng kiểm tra lại",
-			);
-		}
-		setIsScanning(false);
-	};
-
-	// Start and stop scanning handlers
-	const startScan = () => {
-		setScanResult(null);
-		setIsScanning(true);
-	};
-
-	const stopScan = () => {
-		setIsScanning(false);
-	};
+		console.log("orderItems ", orderItems);
+	}, [orderItems]);
 
 	useEffect(() => {
 		getOrderItems();
 	}, []);
 
 	return (
-		<div className="container mt-4 mx-auto">
+		<div className="container mt-4 mx-auto min-h-screen">
 			<div className="flex flex-row">
-				<div className="w-3/4">
-					<h1 className="text-2xl font-bold mb-4">
-						Danh sách món chờ thực hiện
-					</h1>
+				<div className="w-full">
+					<h1 className="text-3xl font-bold mb-4">Danh sách món</h1>
+					<div className="flex flex-row-reverse">
+						<div className="mb-4">
+							<label htmlFor="statusFilter" className="mr-2 font-bold">
+								Lọc theo trạng thái:
+							</label>
+							<select
+								id="statusFilter"
+								value={selectedStatus}
+								onChange={(e) => setSelectedStatus(e.target.value)}
+								className="p-2 border rounded">
+								<option value="ALL">Tất cả</option>
+								<option value="PROCESSING">Đang thực hiện</option>
+								<option value="PAID">Đang chờ</option>
+								<option value="WAITING">Chờ khách hàng đến lấy</option>
+								<option value="SHIPPING">Đang giao cho khách</option>
+								<option value="COMPLETED">Đã hoàn thành</option>
+								<option value="CANCELLED">Đã bị hủy</option>
+							</select>
+							<button
+								onClick={exportToExcel}
+								className="ml-4 bg-blue-600 text-white px-4 py-2 rounded-md">
+								Xuất Excel
+							</button>
+						</div>
+					</div>
+
 					{isLoading ? (
 						<div className="text-center">
 							<svg
@@ -220,17 +202,17 @@ const OrdersManager = () => {
 							<p>Loading order items...</p>
 						</div>
 					) : (
-						<div className="grid grid-cols-1 gap-4">
-							{orderItems.map((item) => (
+						<div className="grid grid-cols-1 gap-4 pb-10">
+							{filterOrders(orderItems, selectedStatus).map((item) => (
 								<div
 									key={item.id}
-									className="border p-4 rounded-lg shadow-md flex justify-between items-center">
-									<div className="flex ">
+									className="border p-4 bg-white rounded-lg shadow-xl flex justify-between items-center">
+									<div className="flex w-1/2">
 										<div className="mr-4">
 											<img
-												src={`http://localhost:8080/api/images/${item.dishesDTO.imageId}`}
+												src={`https://angelic-strength-production.up.railway.app/api/images/${item.dishesDTO.imageId}`}
 												alt="Food"
-												className="w-32 h-32 object-cover rounded-lg mb-2"
+												className="w-[150px] h-[150px] border border-slate-300 object-cover rounded-lg"
 											/>
 										</div>
 										<div>
@@ -239,81 +221,68 @@ const OrdersManager = () => {
 											</p>
 											<p>Số lượng: {item.quantity}</p>
 											<p>Mô tả: {item.description}</p>
-											<p>{renderStatus(item.status)}</p>
-											<p>Thời gian đặt: {formatToVietnamTime(item.createAt)}</p>
-											<p>
-												Thời gian hoàn thành:{" "}
-												{item.finishAt
-													? formatToVietnamTime(item.finishAt)
-													: "---"}
-											</p>
+											<p className="font-bold">{renderStatus(item.status)}</p>
+											<div className="flex items-center">
+												<p>Thời gian đặt:</p>
+												<p className="p-1 rounded-md bg-blue-100 mx-2">
+													{compareCurrentTime(item.createAt)}
+												</p>
+											</div>
+											<div className="mt-1 flex items-center">
+												<p>Thời gian hoàn thành:</p>
+												<p className="p-1 rounded-md bg-green-100 mx-2">
+													{item.finishAt
+														? compareCurrentTime(item.finishAt)
+														: "--/--"}
+												</p>
+											</div>
 										</div>
 									</div>
-									<div className="space-x-2">
-										{/* Conditionally render buttons based on order status */}
-										{item.status === "PAID" && (
-											<button
-												className="bg-green-600 text-white px-4 py-2 rounded-md"
-												onClick={() => takeOrderItem(item.id)}>
-												{isProcessing && item.id === orderItemId
-													? "Đang thực hiện..."
-													: "Bắt đầu chế biến"}
-											</button>
-										)}
-										{item.status === "WAITING" && (
-											<button
-												className="bg-green-600 text-white px-4 py-2 rounded-md"
-												onClick={() => giveOrderItem(item.id)}>
-												Giao món
-											</button>
-										)}
-										{item.status === "PROCESSING" && (
-											<>
+									<div className="flex h-full justify-between w-1/2 space-x-2">
+										{/* Thông tin khách hàng */}
+										<div className="mr-4">
+											<p className="font-bold">Thông tin khách hàng</p>
+											<p>Tên khách hàng: {item?.userDTO.username}</p>
+											<p>Số điện thoại: {item?.userDTO.phone}</p>
+											<p>Email: {item?.userDTO.email}</p>
+										</div>
+
+										<div className="flex items-center">
+											{/* Conditionally render buttons based on order status */}
+											{item.status === "PAID" && (
 												<button
-													className="bg-blue-600 text-white px-4 py-2 rounded-md"
-													onClick={() => finishOrderItem(item.id)}>
+													className="bg-green-600 text-white px-4 py-2 rounded-md"
+													onClick={() => takeOrderItem(item.id)}>
 													{isProcessing && item.id === orderItemId
-														? "Đang hoàn tất..."
-														: "Hoàn tất"}
+														? "Đang thực hiện..."
+														: "Bắt đầu chế biến"}
 												</button>
-												<button
-													className="bg-red-600 text-white px-4 py-2 rounded-md"
-													onClick={() => cancelOrderItem(item.id)}>
-													{isProcessing && item.id === orderItemId
-														? "Đang hủy..."
-														: "Hủy món"}
-												</button>
-											</>
-										)}
+											)}
+
+											{item.status === "PROCESSING" && (
+												<>
+													<button
+														className="bg-blue-600 text-white px-4 py-2 rounded-md mr-2"
+														onClick={() => finishOrderItem(item.id)}>
+														{isProcessing && item.id === orderItemId
+															? "Đang hoàn tất..."
+															: "Hoàn tất chế biến"}
+													</button>
+													<button
+														className="bg-red-600 text-white px-4 py-2 rounded-md"
+														onClick={() => cancelOrderItem(item.id)}>
+														{isProcessing && item.id === orderItemId
+															? "Đang hủy..."
+															: "Hủy chế biến"}
+													</button>
+												</>
+											)}
+										</div>
 									</div>
 								</div>
 							))}
 						</div>
 					)}
-				</div>
-				<div className="w-1/4 p-4 border rounded-xl shadow-md">
-					<div className="mb-4">
-						<h2 className="text-xl font-bold mb-2">Quét nhận đơn</h2>
-						<div id="reader" style={{ width: "100%", height: "250px" }}></div>
-					</div>
-					<p className="font-black text-red-500"> {scanResult}</p>
-					<div className="flex flex-row justify-end">
-						{!isScanning && (
-							<button
-								className="bg-green-600 text-white px-4 py-2 rounded-md mr-2"
-								onClick={startScan}>
-								Quét mã QR
-							</button>
-						)}
-
-						{isScanning && (
-							<button
-								className="bg-red-600 text-white px-4 py-2 rounded-md"
-								onClick={stopScan}>
-								Dừng quét
-							</button>
-						)}
-					</div>
 				</div>
 			</div>
 		</div>

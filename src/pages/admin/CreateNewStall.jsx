@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 
 const CreateNewStall = () => {
@@ -8,6 +8,8 @@ const CreateNewStall = () => {
 	const { canteenSize } = location.state || { canteenSize: 0 };
 	const token = localStorage.getItem("token");
 	const index = localStorage.getItem("index");
+	const navigate = useNavigate();
+
 	const instance = axios.create({
 		baseURL: "https://angelic-strength-production.up.railway.app",
 		headers: {
@@ -50,6 +52,7 @@ const CreateNewStall = () => {
 				formData,
 			);
 			if (response.status === 201) {
+				navigate(index);
 				alert("Tạo gian hàng thành công!");
 			}
 		} catch (error) {

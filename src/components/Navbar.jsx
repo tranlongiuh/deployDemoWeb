@@ -57,15 +57,14 @@ const Navbar = () => {
 								<>
 									<a
 										href={indexPage}
-										className="transition-all cursor-pointer hover:text-brightColor">
+										className="transition-all cursor-pointer p-2 rounded-xl hover:bg-orange-500 hover:text-white">
 										Trang chủ
 									</a>
-
 									<div className="relative group">
 										<div className="flex items-center gap-1">
 											<a
 												href={"/manager/foods"}
-												className="transition-all cursor-pointer hover:text-brightColor">
+												className="transition-all cursor-pointer p-2 rounded-xl hover:bg-orange-500 hover:text-white">
 												Món ăn
 											</a>
 											{/* <BiChevronDown className="cursor-pointer" size={25} /> */}
@@ -75,7 +74,7 @@ const Navbar = () => {
 											<li>
 												<a
 													href={"/manager/schedule"}
-													className="text-gray-800 transition-all cursor-pointer hover:text-brightColor">
+													className="text-gray-800 transition-all cursor-pointer p-2 rounded-xl hover:bg-orange-500 hover:text-white">
 													Lịch theo ngày
 												</a>
 											</li>
@@ -83,9 +82,15 @@ const Navbar = () => {
 									</div>
 									<a
 										href="/manager/orders"
-										className="transition-all cursor-pointer hover:text-brightColor">
+										className="transition-all cursor-pointer p-2 rounded-xl hover:bg-orange-500 hover:text-white">
 										Đơn hàng
 									</a>
+									<a
+										href="/manager/orders/scan"
+										className="transition-all cursor-pointer p-2 rounded-xl hover:bg-orange-500 hover:text-white">
+										Quét mã
+									</a>
+
 									{/* <a
 										href="/manager/review"
 										className="transition-all cursor-pointer hover:text-brightColor">
@@ -148,7 +153,7 @@ const Navbar = () => {
 								Hồ sơ
 							</a> */}
 							<a
-								className="px-6 py-1 transition-all border-2 rounded-full border-brightColor text-brightColor hover:bg-brightColor hover:text-white"
+								className="px-6 py-1 transition-all border-2 rounded-full border-brightColor text-brightColor hover:bg-brightColor hover:text-red-600 hover:bg-slate-200"
 								onClick={() => {
 									localStorage.clear(); // Xóa token khỏi localStorage
 									// Làm mới trang để cập nhật giao diện
@@ -217,7 +222,7 @@ const Navbar = () => {
 								Hồ sơ
 							</Link>
 							<a
-								className="px-6 py-1 transition-all border-2 rounded-full border-brightColor text-brightColor hover:bg-brightColor hover:text-white"
+								className="px-6 py-1 transition-all border-2 rounded-full border-brightColor text-brightColor"
 								title=""
 								onClick={() => {
 									localStorage.clear(); // Xóa token khỏi localStorage

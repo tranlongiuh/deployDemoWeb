@@ -114,7 +114,7 @@ const UploadImage = () => {
 				<div>
 					<h3>Selected Image:</h3>
 					<img
-						src={`http://localhost:8080/api/images/${idImage}`}
+						src={`https://angelic-strength-production.up.railway.app/api/images/${idImage}`}
 						alt="Selected"
 						className="w-24 h-24 mt-4"
 					/>
@@ -137,7 +137,7 @@ const UploadImage = () => {
 							<td>{id}</td>
 							<td>
 								<img
-									src={`http://localhost:8080/api/images/${id}`}
+									src={`https://angelic-strength-production.up.railway.app/api/images/${id}`}
 									alt="Food"
 									className="w-24 h-24"
 								/>

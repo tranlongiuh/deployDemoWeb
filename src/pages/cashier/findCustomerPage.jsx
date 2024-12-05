@@ -115,13 +115,12 @@ const FindCustomerPage = () => {
 				<div className="flex w-full ">
 					<div className="w-full p-5 border-4 border-double rounded-lg border-sky-500">
 						<div className="flex my-2">
-							<p className="text-lg font-bold">Tên tài khoản: </p>
-							<p className="ml-2 text-lg">{customer.username}</p>
-						</div>
-
-						<div className="flex my-2">
 							<p className="text-lg font-bold">Email: </p>
 							<p className="ml-2 text-lg">{customer.email}</p>
+						</div>
+						<div className="flex my-2">
+							<p className="text-lg font-bold">Số điện thoại: </p>
+							<p className="ml-2 text-lg">{customer.phone}</p>
 						</div>
 						<div className="flex my-2">
 							<p className="text-lg font-bold">Số dư: </p>

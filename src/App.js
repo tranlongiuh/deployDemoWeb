@@ -20,6 +20,7 @@ import FoodFormPage from "./pages/manager/FoodFormPage";
 import FoodManagePage from "./pages/manager/FoodManagePage";
 import ManagerIndexPage from "./pages/manager/index";
 import OrdersPage from "./pages/manager/OrdersPage";
+import ScanQRPage from "./pages/manager/ScanQRPage";
 import ScheduleFormPage from "./pages/manager/ScheduleFormPage";
 import ScheduleManagePage from "./pages/manager/ScheduleManagePage";
 import PromotionPage from "./pages/PromotionPage";
@@ -60,7 +61,6 @@ const App = () => {
 					path="/admin/createStall"
 					element={<PrivateRoute element={<CreateNewStall />} role="/admin" />}
 				/>
-
 				{/* Manager */}
 				<Route
 					path="/manager"
@@ -95,6 +95,11 @@ const App = () => {
 					element={<PrivateRoute element={<OrdersPage />} role="/manager" />}
 				/>
 				<Route
+					path="/manager/orders/scan"
+					element={<PrivateRoute element={<ScanQRPage />} role="/manager" />}
+				/>
+
+				<Route
 					path="/uploadImage"
 					element={
 						<PrivateRoute element={<UploadImagePage />} role="/manager" />
@@ -104,12 +109,6 @@ const App = () => {
 					path="/promotions"
 					element={<PrivateRoute element={<PromotionPage />} role="/manager" />}
 				/>
-				{/* <Route
-				path="/cashier/schedule/form"
-				element={
-					<PrivateRoute element={<ScheduleFormPage />} role="/cashier" />
-				}
-			/> */}
 			</Routes>
 		</Router>
 	);

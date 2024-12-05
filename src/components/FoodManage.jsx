@@ -245,8 +245,8 @@ const FoodManage = () => {
 												className="w-6 h-6 text-indigo-600 rounded-md border-gray-300"
 											/>
 											<img
-												src={`http://localhost:8080/api/images/${food.imageId}`}
-												alt="image"
+												src={`https://angelic-strength-production.up.railway.app/api/images/${food.imageId}`}
+												alt=""
 												className="w-40 aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
 											/>
 											<div>

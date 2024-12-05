@@ -36,6 +36,18 @@ export function getOrderStatus(status) {
 					Đã hủy
 				</span>
 			);
+		case "WAITING":
+			return (
+				<span className="capitalize py-1 px-2 rounded-md text-xs bg-orange-500 ">
+					Chờ đến nhận
+				</span>
+			);
+		case "SHIPPING":
+			return (
+				<span className="capitalize py-1 px-2 rounded-md text-xs bg-purple-500 ">
+					Đang giao
+				</span>
+			);
 		default:
 			return (
 				<span className="capitalize py-1 px-2 rounded-md text-xs text-gray-600 bg-gray-100">
@@ -58,8 +70,38 @@ export const formatToVietnamTime = (isoDateString) => {
 	});
 };
 
+export const compareCurrentTime = (isoDateString) => {
+	const date = new Date(isoDateString);
+	const now = new Date();
+	const diff = now - date;
+
+	const minutes = Math.floor(diff / 60000);
+	const hours = Math.floor(minutes / 60);
+	const days = Math.floor(hours / 24);
+
+	if (minutes < 1) {
+		return "Vừa xong";
+	} else if (minutes < 60) {
+		return `${minutes} phút trước`;
+	} else if (hours < 24) {
+		const remainingMinutes = minutes % 60;
+		return remainingMinutes > 0
+			? `${hours} giờ ${remainingMinutes} phút trước`
+			: `${hours} giờ trước`;
+	} else {
+		const remainingHours = hours % 24;
+		return remainingHours > 0
+			? `${days} ngày ${remainingHours} giờ trước`
+			: `${days} ngày trước`;
+	}
+};
+
 export const renderStatus = (param) => {
 	switch (param) {
+		case "SHIPPING":
+			return "Trạng thái: Đang giao cho khách";
+		case "COMPLETED":
+			return "Trạng thái: Đã hoàn thành";
 		case "PROCESSING":
 			return "Trạng thái: Đang thực hiện";
 		case "WAITING":
@@ -68,6 +110,8 @@ export const renderStatus = (param) => {
 			return "Trạng thái: Đang chờ";
 		case "NEW":
 			return "Trạng thái: Chưa thanh toán";
+		case "CANCELLED":
+			return "Trạng thái: Đã bị hủy";
 		default:
 			return "Trạng thái: Không xác định " + param;
 	}

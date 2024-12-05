@@ -240,7 +240,7 @@ const ScheduleManage = () => {
 												onChange={() => handleCheckItem(food.id)} // Sử dụng ID thay vì index
 											/>
 											<img
-												src={`http://localhost:8080/api/images/${food.imageId}`}
+												src={`https://angelic-strength-production.up.railway.app/api/images/${food.imageId}`}
 												alt=""
 												className="w-40 aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
 											/>
@@ -267,9 +267,7 @@ const ScheduleManage = () => {
 										</td>
 
 										<td>
-											<span className="inline-block w-20 group-hover:hidden">
-												11/11/2024
-											</span>
+											<span className="inline-block w-20 group-hover:hidden"></span>
 											<div className="hidden group-hover:flex group-hover:w-20 group-hover:items-center group-hover:text-gray-500 group-hover:gap-x-2">
 												<button
 													onClick={() => {

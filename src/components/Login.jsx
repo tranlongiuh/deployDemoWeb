@@ -149,24 +149,6 @@ const Login = () => {
 						</div>
 					)}
 				</div>
-
-				{/* <div className="flex-row justify-center gap-2 pt-5 text-center">
-					<p className="text-lg text-primary font-pregular">
-						Bạn chưa có tài khoản?{" "}
-						<a
-							href="/register"
-							className="text-lg text-blue-600 font-psemibold hover:underline">
-							Đăng ký
-						</a>
-					</p>
-				</div>
-				<div className="flex-row justify-center gap-2 pt-5 text-center">
-					<a
-						href="/forgot"
-						className="text-sm text-blue-600 font-psemibold hover:underline">
-						Quên mật khẩu
-					</a>
-				</div> */}
 			</div>
 		</div>
 	);

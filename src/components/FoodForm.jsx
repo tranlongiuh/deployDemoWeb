@@ -104,7 +104,7 @@ const FoodForm = () => {
 	return (
 		<form
 			onSubmit={handleSubmit}
-			className="max-w-lg mx-auto bg-white shadow-lg rounded-lg p-6 space-y-4">
+			className="max-w-lg mx-auto  shadow-lg rounded-lg p-6 space-y-4 bg-slate-200 mt-2">
 			<h2 className="text-2xl font-semibold text-gray-700 mb-6">
 				{editing ? "Chỉnh sửa món ăn" : "Tạo món ăn mới"}
 			</h2>
@@ -162,7 +162,7 @@ const FoodForm = () => {
 				<div className="space-y-2">
 					<label className="block text-gray-600">Hình ảnh hiện tại</label>
 					<img
-						src={`http://localhost:8080/api/images/${currentImageId}`}
+						src={`https://angelic-strength-production.up.railway.app/api/images/${currentImageId}`}
 						alt="Food"
 						className="w-32 h-32 object-cover rounded-lg mb-2"
 					/>
