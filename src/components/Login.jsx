@@ -35,7 +35,7 @@ const Login = () => {
 			formData.append("username", form.userName);
 			formData.append("password", form.password);
 			const response = await axios.post(
-				"https://angelic-strength-production.up.railway.app/api/auth/login",
+				"https://canteen.iuh.api.com/api/auth/login",
 				formData,
 				{
 					headers: {
