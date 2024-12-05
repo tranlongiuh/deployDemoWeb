@@ -15,7 +15,7 @@ const OrdersManager = () => {
 
 	// Axios instance setup
 	const instance = axios.create({
-		baseURL: "http://localhost:8080/",
+		baseURL: "https://angelic-strength-production.up.railway.app",
 		headers: { Authorization: `Bearer ${token}` },
 		timeout: 5000,
 	});

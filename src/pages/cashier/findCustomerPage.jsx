@@ -1,15 +1,14 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import FormField from "../../components/FormField";
 import axios from "axios";
+import React, { useState } from "react";
 import CustomButton from "../../components/CustomButton";
+import FormField from "../../components/FormField";
 import Navbar from "../../components/Navbar";
 
 const FindCustomerPage = () => {
 	const token = localStorage.getItem("token");
 	const index = localStorage.getItem("index");
 	const instance = axios.create({
-		baseURL: "http://localhost:8080/",
+		baseURL: "https://angelic-strength-production.up.railway.app",
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},

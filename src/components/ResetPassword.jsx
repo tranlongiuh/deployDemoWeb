@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 import CustomButton from "./CustomButton";
@@ -8,7 +8,7 @@ import FormField from "./FormField";
 function ResetPassword() {
 	const authToken = localStorage.getItem("token");
 	const instance = axios.create({
-		baseURL: "http://localhost:8080/",
+		baseURL: "https://angelic-strength-production.up.railway.app",
 		headers: {
 			Authorization: `Bearer ${authToken}`,
 		},

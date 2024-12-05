@@ -11,7 +11,7 @@ const ScheduleForm = () => {
 
 	const token = localStorage.getItem("token");
 	const instance = axios.create({
-		baseURL: "http://localhost:8080/",
+		baseURL: "https://angelic-strength-production.up.railway.app",
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},

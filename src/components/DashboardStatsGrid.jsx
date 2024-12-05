@@ -1,12 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { IoBagHandle, IoPieChart, IoPeople, IoCart } from "react-icons/io5";
+import { IoBagHandle, IoCart, IoPeople } from "react-icons/io5";
 
 export default function DashboardStatsGrid() {
 	const token = localStorage.getItem("token");
 	const index = localStorage.getItem("index");
 	const instance = axios.create({
-		baseURL: "http://localhost:8080/",
+		baseURL: "https://angelic-strength-production.up.railway.app",
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
