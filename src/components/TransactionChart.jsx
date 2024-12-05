@@ -13,7 +13,6 @@ import {
 
 export default function TransactionChart() {
 	const token = localStorage.getItem("token");
-	const index = localStorage.getItem("index");
 	const instance = axios.create({
 		baseURL: "https://angelic-strength-production.up.railway.app",
 		headers: {
@@ -26,7 +25,7 @@ export default function TransactionChart() {
 		async function fetchStats() {
 			try {
 				const response = await instance.get("/api/dashboard/transactions");
-				setData(response.data);
+				setData(response?.data);
 				console.log("data ", data);
 			} catch (error) {
 				console.error("Failed to fetch stats", error);

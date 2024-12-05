@@ -5,10 +5,6 @@ import CustomButton from "./CustomButton";
 import FormField from "./FormField";
 
 const ForgotPassword = () => {
-	function delay(ms) {
-		return new Promise((resolve) => setTimeout(resolve, ms));
-	}
-
 	const [form, setForm] = useState({
 		email: "",
 	});

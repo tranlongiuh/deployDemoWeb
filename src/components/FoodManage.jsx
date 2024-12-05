@@ -16,15 +16,6 @@ const FoodManage = () => {
 	const [foods, setFoods] = useState([]);
 	const [detail, setDetail] = useState({});
 	const [filter, setFilter] = useState("");
-	const [food, setFood] = useState({
-		name: "",
-		description: "",
-		price: "",
-		imageId: "",
-		categoryId: "",
-	});
-	const [foodId, setFoodId] = useState("");
-	const [editing, setEditing] = useState(false);
 
 	const token = localStorage.getItem("token");
 	const instance = axios.create({
@@ -95,14 +86,7 @@ const FoodManage = () => {
 		try {
 			const response = await instance.delete(`/api/foods/${id}`);
 			if (response.status === 200) {
-				setFoods(foods.filter((f) => f.id !== id)); // Update the list after deletion
-				setFood({
-					name: "",
-					description: "",
-					price: "",
-					imageId: "",
-					categoryId: "",
-				});
+				setFoods(foods.filter((f) => f.id !== id));
 			}
 		} catch (error) {
 			console.error("Error deleting food:", error);

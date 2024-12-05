@@ -7,10 +7,8 @@ const OrdersManager = () => {
 	const [orderItems, setOrderItems] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isProcessing, setIsProcessing] = useState(false);
-	const [orderItemId, setOrderItemId] = useState(""); // Track current order item being processed
-	const [scanResult, setScanResult] = useState(null);
-	const [isScanning, setIsScanning] = useState(false);
-	const [selectedStatus, setSelectedStatus] = useState("ALL"); // State to track selected status
+	const [orderItemId, setOrderItemId] = useState("");
+	const [selectedStatus, setSelectedStatus] = useState("ALL");
 	const token = localStorage.getItem("token");
 
 	// Axios instance setup
@@ -107,6 +105,7 @@ const OrdersManager = () => {
 	};
 
 	const getOrderItems = async () => {
+		setIsLoading(true); // Set loading state to true
 		try {
 			const response = await instance.get("/api/order-items");
 			if (response.status === 200) {
@@ -114,6 +113,8 @@ const OrdersManager = () => {
 			}
 		} catch (error) {
 			console.error("Error fetching order items:", error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -199,7 +200,7 @@ const OrdersManager = () => {
 									fill="currentColor"
 									d="M4 12a8 8 0 018-8v8H4z"></path>
 							</svg>
-							<p>Loading order items...</p>
+							<p>Đang tải danh sách món...</p>
 						</div>
 					) : (
 						<div className="grid grid-cols-1 gap-4 pb-10">

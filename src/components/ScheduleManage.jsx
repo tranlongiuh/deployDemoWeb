@@ -195,132 +195,159 @@ const ScheduleManage = () => {
 				</div>
 
 				{/* Food Table */}
-				<div className="flex-1 flex flex-col justify-between bg-white ">
-					<div className="flex-grow">
-						<table className="w-full border-b border-gray-200">
-							<thead>
-								<tr className="text-sm font-medium text-gray-700 border-b border-gray-200">
-									<td className="pl-10">
-										<div className="flex items-center gap-x-4">
-											<input
-												type="checkbox"
-												className="w-6 h-6 text-indigo-600 rounded-md border-gray-300"
-												onChange={handleCheckAll} // Handle checking all
-												checked={allChecked} // Thay đổi ở đây
-											/>
-											<span>Tên món</span>
-										</div>
-									</td>
-									<td className="py-4 px-4 text-center">Loại</td>
-									<td className="py-4 px-4 text-center">Giá</td>
-									<td className="py-4 px-4 text-center">Đánh giá</td>
-									<td className="py-4 pr-10 pl-4 text-center">
-										<div className="w-6 h-6 fill-current">
-											<button
-												onClick={() => {
-													deleteAllFoods();
-												}}
-												className="p-2 hover:rounded-md hover:bg-gray-200">
+				<div className="flex-1 flex flex-col justify-between bg-white">
+					{loading ? (
+						<div className="flex items-center justify-center h-full">
+							<svg
+								className="animate-spin h-10 w-10 text-gray-600"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24">
+								<circle
+									className="opacity-25"
+									cx="12"
+									cy="12"
+									r="10"
+									stroke="currentColor"
+									strokeWidth="4"></circle>
+								<path
+									className="opacity-75"
+									fill="currentColor"
+									d="M4 12a8 8 0 018-8v8H4z"></path>
+							</svg>
+							<p>Đang tải dữ liệu...</p>
+						</div>
+					) : (
+						<div className="flex-1 flex flex-col justify-between bg-white ">
+							<div className="flex-grow">
+								<table className="w-full border-b border-gray-200">
+									<thead>
+										<tr className="text-sm font-medium text-gray-700 border-b border-gray-200">
+											<td className="pl-10">
+												<div className="flex items-center gap-x-4">
+													<input
+														type="checkbox"
+														className="w-6 h-6 text-indigo-600 rounded-md border-gray-300"
+														onChange={handleCheckAll} // Handle checking all
+														checked={allChecked} // Thay đổi ở đây
+													/>
+													<span>Tên món</span>
+												</div>
+											</td>
+											<td className="py-4 px-4 text-center">Loại</td>
+											<td className="py-4 px-4 text-center">Giá</td>
+											<td className="py-4 px-4 text-center">Đánh giá</td>
+											<td className="py-4 pr-10 pl-4 text-center">
 												<div className="w-6 h-6 fill-current">
-													<IoTrash className="text-2xl text-black" />
+													<button
+														onClick={() => {
+															deleteAllFoods();
+														}}
+														className="p-2 hover:rounded-md hover:bg-gray-200">
+														<div className="w-6 h-6 fill-current">
+															<IoTrash className="text-2xl text-black" />
+														</div>
+													</button>
 												</div>
-											</button>
-										</div>
-									</td>
-								</tr>
-							</thead>
-							{currentFoods.map((food) => (
-								<tbody key={food.id}>
-									<tr className="hover:bg-gray-100 transition-colors group">
-										<td className="flex gap-x-4 items-center py-4 pl-10">
-											<input
-												type="checkbox"
-												className="w-6 h-6 text-indigo-600 rounded-md border-gray-300"
-												checked={!!checkedItems[food.id]} // Lấy trạng thái từ checkedItems dựa trên ID
-												onChange={() => handleCheckItem(food.id)} // Sử dụng ID thay vì index
-											/>
-											<img
-												src={`https://angelic-strength-production.up.railway.app/api/images/${food.imageId}`}
-												alt=""
-												className="w-40 aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
-											/>
-											<div>
-												<a
-													href="#"
-													className="text-lg font-semibold text-gray-700">
-													{food.name}
-												</a>
-												<div className="font-medium text-gray-400">
-													{food.description}
-												</div>
-											</div>
-										</td>
-										<td className="font-medium text-center">
-											{food.category ? food.category.name : "No category"}
-										</td>
-										<td className="font-medium text-center">
-											{food.price} vnđ
-										</td>
-										<td className="text-center">
-											<span className="font-medium">*</span>
-											<span className="text-gray-400">/5</span>
-										</td>
-
-										<td>
-											<span className="inline-block w-20 group-hover:hidden"></span>
-											<div className="hidden group-hover:flex group-hover:w-20 group-hover:items-center group-hover:text-gray-500 group-hover:gap-x-2">
-												<button
-													onClick={() => {
-														console.log("deleteFood ", food.id);
-														const confirmed = window.confirm(
-															"Bạn có chắc chắn muốn xóa món ăn này?",
-														);
-														if (confirmed) {
-															deleteFood(food.id);
-														}
-													}}
-													className="p-2 hover:rounded-md hover:bg-gray-200">
-													<div className="w-6 h-6 fill-current">
-														<IoTrash className="text-2xl text-black" />
+											</td>
+										</tr>
+									</thead>
+									{currentFoods.map((food) => (
+										<tbody key={food.id}>
+											<tr className="hover:bg-gray-100 transition-colors group">
+												<td className="flex gap-x-4 items-center py-4 pl-10">
+													<input
+														type="checkbox"
+														className="w-6 h-6 text-indigo-600 rounded-md border-gray-300"
+														checked={!!checkedItems[food.id]} // Lấy trạng thái từ checkedItems dựa trên ID
+														onChange={() => handleCheckItem(food.id)} // Sử dụng ID thay vì index
+													/>
+													<img
+														src={`https://angelic-strength-production.up.railway.app/api/images/${food.imageId}`}
+														alt=""
+														className="w-40 aspect-[3/2] rounded-lg object-cover object-top border border-gray-200"
+													/>
+													<div>
+														<a
+															href="#"
+															className="text-lg font-semibold text-gray-700">
+															{food.name}
+														</a>
+														<div className="font-medium text-gray-400">
+															{food.description}
+														</div>
 													</div>
-												</button>
-											</div>
-										</td>
-									</tr>
-								</tbody>
-							))}
-						</table>
-					</div>
+												</td>
+												<td className="font-medium text-center">
+													{food.category ? food.category.name : "No category"}
+												</td>
+												<td className="font-medium text-center">
+													{food.price} vnđ
+												</td>
+												<td className="text-center">
+													<span className="font-medium">*</span>
+													<span className="text-gray-400">/5</span>
+												</td>
 
-					{/* Pagination controls */}
-					<div className="flex justify-between mt-4">
-						<button
-							onClick={prevPage}
-							disabled={currentPage === 1}
-							className={`px-4 py-2 border rounded-md ${
-								currentPage === 1
-									? "bg-gray-300 cursor-not-allowed"
-									: "bg-blue-500 text-white"
-							}`}>
-							<IoChevronBackOutline />
-						</button>
+												<td>
+													<span className="inline-block w-20 group-hover:hidden"></span>
+													<div className="hidden group-hover:flex group-hover:w-20 group-hover:items-center group-hover:text-gray-500 group-hover:gap-x-2">
+														<button
+															onClick={() => {
+																console.log("deleteFood ", food.id);
+																const confirmed = window.confirm(
+																	"Bạn có chắc chắn muốn xóa món ăn này?",
+																);
+																if (confirmed) {
+																	deleteFood(food.id);
+																}
+															}}
+															className="p-2 hover:rounded-md hover:bg-gray-200">
+															<div className="w-6 h-6 fill-current">
+																<IoTrash className="text-2xl text-black" />
+															</div>
+														</button>
+													</div>
+												</td>
+											</tr>
+										</tbody>
+									))}
+								</table>
+							</div>
 
-						{/* Hiển thị số trang hiện tại / tổng số trang */}
-						<span className="text-sm">
-							Trang {currentPage} / {Math.ceil(foods.length / foodsPerPage)}
-						</span>
+							{/* Pagination controls */}
+							<div className="flex justify-between mt-4">
+								<button
+									onClick={prevPage}
+									disabled={currentPage === 1}
+									className={`px-4 py-2 border rounded-md ${
+										currentPage === 1
+											? "bg-gray-300 cursor-not-allowed"
+											: "bg-blue-500 text-white"
+									}`}>
+									<IoChevronBackOutline />
+								</button>
 
-						<button
-							onClick={nextPage}
-							disabled={currentPage === Math.ceil(foods.length / foodsPerPage)}
-							className={`px-4 py-2 border rounded-md ${
-								currentPage === Math.ceil(foods.length / foodsPerPage)
-									? "bg-gray-300 cursor-not-allowed"
-									: "bg-blue-500 text-white"
-							}`}>
-							<IoChevronForwardOutline />
-						</button>
-					</div>
+								{/* Hiển thị số trang hiện tại / tổng số trang */}
+								<span className="text-sm">
+									Trang {currentPage} / {Math.ceil(foods.length / foodsPerPage)}
+								</span>
+
+								<button
+									onClick={nextPage}
+									disabled={
+										currentPage === Math.ceil(foods.length / foodsPerPage)
+									}
+									className={`px-4 py-2 border rounded-md ${
+										currentPage === Math.ceil(foods.length / foodsPerPage)
+											? "bg-gray-300 cursor-not-allowed"
+											: "bg-blue-500 text-white"
+									}`}>
+									<IoChevronForwardOutline />
+								</button>
+							</div>
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

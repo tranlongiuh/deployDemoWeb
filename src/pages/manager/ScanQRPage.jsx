@@ -16,16 +16,19 @@ const ScanQRPage = () => {
 		timeout: 5000,
 	});
 	const giveOrderItem = async (id) => {
+		setIsLoading(true); // Bắt đầu tải
 		try {
 			const response = await instance.post(`/api/order-items/give/${id}`);
 			if (response.status === 200) {
-				// Remove the given item from the orderItems list
 				setOrderItems(orderItems.filter((item) => item.id !== id));
 			}
 		} catch (error) {
 			console.error("Error giving order item:", error);
+		} finally {
+			setIsLoading(false); // Kết thúc tải
 		}
 	};
+
 	const startScan = () => {
 		setScanResult(null);
 		setIsScanning(true);
@@ -144,7 +147,7 @@ const ScanQRPage = () => {
 										fill="currentColor"
 										d="M4 12a8 8 0 018-8v8H4z"></path>
 								</svg>
-								<p>Loading order items...</p>
+								<p>Đang tải dữ liệu...</p>
 							</div>
 						) : (
 							<div className="grid grid-cols-1 gap-4">
