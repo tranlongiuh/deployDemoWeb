@@ -1,12 +1,12 @@
 import React from "react";
 import Navbar from "../components/Navbar";
-import ForgotPassword from "../components/ForgotPassword";
+import ResetPassword from "../components/ResetPassword";
 
 const ResetPasswordPage = () => (
-  <div>
-    <Navbar />
-    <ForgotPassword />
-  </div>
+	<div>
+		<Navbar />
+		<ResetPassword />
+	</div>
 );
 
 export default ResetPasswordPage;

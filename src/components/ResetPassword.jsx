@@ -27,9 +27,13 @@ function ResetPassword() {
 		console.log("token ", token);
 
 		instance
-			.post("http://localhost:8080/api/auth/getReset", null, {
-				params: { token: token },
-			})
+			.post(
+				"https://angelic-strength-production.up.railway.app/api/auth/getReset",
+				null,
+				{
+					params: { token: token },
+				},
+			)
 			.then((response) => {
 				if (response.status === 200) {
 					console.log("Token hợp lệ, hiển thị form reset password.");
@@ -61,7 +65,10 @@ function ResetPassword() {
 
 		// Gọi API để thay đổi mật khẩu
 		instance
-			.post("http://localhost:8080/api/auth/reset", requestReset)
+			.post(
+				"https://angelic-strength-production.up.railway.app/api/auth/reset",
+				requestReset,
+			)
 			.then((response) => {
 				if (response.status === 200) {
 					alert(response.data || "Đặt lại mật khẩu thành công!");
